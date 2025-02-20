@@ -18,15 +18,16 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     steps:
+      - name: Print received inputs
+        run: |
+          echo "Received Java Version: ${{ inputs.java-version }}"
+          echo "Received Test Profiles: ${{ inputs.test-profiles }}"
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Set up JDK
-        run: echo "Received Java Version: ${{ inputs.java-version }}"
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: ${{ inputs.java-version }}
       - name: Run tests
-        run: |
-          echo "Received Test Profiles: ${{ inputs.test-profiles }}"
-          ./gradlew test -Dspring.profiles.active=${{ inputs.test-profiles }}
+        run: ./gradlew test -Dspring.profiles.active=${{ inputs.test-profiles }}
