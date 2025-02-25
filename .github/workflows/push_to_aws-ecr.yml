@@ -1,0 +1,48 @@
+name: Build and Push Docker Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      application-name:
+        description: 'Application Name'
+        required: true
+        type: string
+      tag:
+        description: 'Tag'
+        default: 'latest'
+        required: true
+        type: string
+      dockerfile:
+        description: 'Dockerfile Name'
+        default: 'Dockerfile'
+        required: true
+        type: string
+      aws-region:
+        description: 'AWS Region'
+        default: 'us-west-2'
+        required: true
+        type: string
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print received inputs
+        run: |
+          echo "Application Name: ${{ inputs.application-name }}"
+          echo "Tag: ${{ inputs.tag }}"
+          echo "Dockerfile Name: ${{ inputs.dockerfile }}"
+          echo "AWS Region: ${{ inputs.aws-region }}"
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ inputs.aws-region }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com
+      - name: Build Docker image
+        run: |
+          docker buildx build --platform linux/amd64,linux/arm64 -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.application-name }}:${{ inputs.tag }} -f ${{ inputs.dockerfile }} .
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.application-name }}:${{ inputs.tag }}
