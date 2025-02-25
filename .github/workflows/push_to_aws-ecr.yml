@@ -1,7 +1,7 @@
 name: Build and Push Docker Image
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       application-name:
         description: 'Application Name'
@@ -19,7 +19,7 @@ on:
         type: string
       aws-region:
         description: 'AWS Region'
-        default: 'us-west-2'
+        default: 'ap-south-1'
         required: true
         type: string
 
