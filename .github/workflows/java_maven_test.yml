@@ -1,0 +1,33 @@
+name: Java Maven Test
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: 'Java Version (Default: 11)'
+        required: true
+        default: '11'
+        type: string
+      test-profiles:
+        description: 'Test Profiles (Comma separated)'
+        required: true
+        default: 'default'
+        type: string
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print received inputs
+        run: |
+          echo "Received Java Version: ${{ inputs.java-version }}"
+          echo "Received Test Profiles: ${{ inputs.test-profiles }}"
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ inputs.java-version }}
+      - name: Run tests
+        run: mvn test -Dspring.profiles.active=${{ inputs.test-profiles }}
