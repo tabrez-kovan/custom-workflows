@@ -55,4 +55,4 @@ jobs:
           aws ecr get-login-password --region ${{ inputs.aws-region }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com
       - name: Build and Push Docker image
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t ${{ inputs.application-name }}:${{ inputs.tag }} -f ${{ inputs.dockerfile }} --push .
+          docker buildx build --platform linux/amd64,linux/arm64 -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.application-name }}:${{ inputs.tag }} -f ${{ inputs.dockerfile }} --push .
