@@ -55,7 +55,10 @@ jobs:
           aws ecr get-login-password --region ${{ inputs.aws-region }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com
       - name: Build Docker image
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.application-name }}:${{ inputs.tag }} -f ${{ inputs.dockerfile }} .
+          docker buildx build --platform linux/amd64,linux/arm64 -t ${{ inputs.application-name }}:${{ inputs.tag }} -f ${{ inputs.dockerfile }} .
+      - name: Tag Docker image for ECR
+        run: |
+          docker tag ${{ inputs.application-name }}:${{ inputs.tag }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.application-name }}:${{ inputs.tag }}
       - name: Push Docker image
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.application-name }}:${{ inputs.tag }}
