@@ -50,6 +50,9 @@ jobs:
       - name: Update kubeconfig
         run: |
           aws eks update-kubeconfig --region ${{ inputs.aws-region }} --name ${{ inputs.cluster-name }}
-      - name: Set image in Kubernetes deployment
+      - name: Replace image URL in deployment.yml
         run: |
-          kubectl set image deployment/${{ inputs.application-name }} ${{ inputs.application-name }}=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.application-name }}:${{ inputs.tag }}
+          sed -i 's|<IMAGE_URL>|${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.application-name }}:${{ inputs.tag }}|g' k8s/deployment.yml
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/deployment.yml
