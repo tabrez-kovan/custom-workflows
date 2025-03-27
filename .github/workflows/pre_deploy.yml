@@ -1,0 +1,39 @@
+name: Non-Prod Deployment Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        required: true
+        default: '11'
+        type: string
+      test-profiles:
+        required: true
+        default: 'default'
+        type: string
+    secrets:
+      SONAR_HOST_URL:
+        required: true
+      SONAR_TOKEN:
+        required: true
+
+jobs:
+  test-application:
+    uses: tabrez-kovan/custom-workflows/.github/workflows/java_maven_test.yml@v1.0
+    with:
+      java-version: ${{ inputs.java-version }}
+      test-profiles: ${{ inputs.test-profiles }}
+   
+  build-application:
+    uses: tabrez-kovan/custom-workflows/.github/workflows/java_maven_build.yml@v1.0
+    needs: test-application
+    with:
+      java-version: ${{ inputs.java-version }}
+
+  scan_application:
+    uses: tabrez-kovan/custom-workflows/.github/workflows/sonar_code_scan.yml@v1.0
+    needs: build-application
+    secrets: inherit
+    with:
+      java-version: ${{ inputs.java-version }}
+      test-profiles: ${{ inputs.test-profiles }}

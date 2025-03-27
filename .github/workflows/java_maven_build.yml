@@ -1,0 +1,27 @@
+name: Java Maven Build
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: 'Java Version (Default: 11)'
+        required: true
+        default: '11'
+        type: string
+
+jobs:
+  build-application:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print received inputs
+        run: |
+          echo "Java Version: ${{ inputs.java-version }}"
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ inputs.java-version }}
+      - name: Build JAR
+        run: mvn clean package -DskipTests
