@@ -1,4 +1,4 @@
-name: Non-Prod Deployment Pipeline
+name: Pre-Deployment Jobs
 
 on:
   workflow_call:

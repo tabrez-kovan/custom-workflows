@@ -1,0 +1,46 @@
+name: Deployment Steps
+
+on:
+  workflow_call:
+    inputs:
+      application-name:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+      dockerfile:
+        required: true
+        type: string
+      aws-region:
+        required: true
+        type: string
+      cluster-name:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCOUNT_ID:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  build-and-push:
+    uses: tabrez-kovan/custom-workflows/.github/workflows/push_to_aws-ecr.yml@v1.0
+    secrets: inherit
+    with:
+      application-name: ${{ inputs.application-name }}
+      tag: ${{ inputs.tag }}
+      dockerfile: ${{ inputs.dockerfile }}
+      aws-region: ${{ inputs.aws-region }}
+
+  deploy-to-eks:
+    uses: tabrez-kovan/custom-workflows/.github/workflows/deploy_to_aws-eks.yml@v1.0
+    secrets: inherit
+    with:
+      application-name: ${{ inputs.application-name }}
+      tag: ${{ inputs.tag }}
+      aws-region: ${{ inputs.aws-region }}
+      cluster-name: ${{ inputs.cluster-name }}

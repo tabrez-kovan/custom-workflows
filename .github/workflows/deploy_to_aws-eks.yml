@@ -4,21 +4,15 @@ on:
   workflow_call:
     inputs:
       application-name:
-        description: 'Application Name'
         required: true
         type: string
       tag:
-        description: 'Tag'
-        default: 'latest'
         required: true
         type: string
       aws-region:
-        description: 'AWS Region'
-        default: 'ap-south-1'
         required: true
         type: string
       cluster-name:
-        description: 'EKS Cluster Name'
         required: true
         type: string
     secrets:
