@@ -36,4 +36,3 @@ jobs:
     secrets: inherit
     with:
       java-version: ${{ inputs.java-version }}
-      test-profiles: ${{ inputs.test-profiles }}
